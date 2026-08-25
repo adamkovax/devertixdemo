@@ -1,0 +1,964 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Demó: a link működik bárkinek, de a keresők nem indexelik. Ha ez élesbe megy,
+     ezt a sort és a robots.txt-t is el kell távolítani. -->
+<meta name="robots" content="noindex, nofollow">
+<title>Devertix AI Megoldástár</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Open+Sans:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
+
+<style>
+/* ============================================================================
+   Devertix — AI megoldások
+   Arculat a devertix.com-ról: Poppins + Open Sans, #511B9A lila, #07063E sötét,
+   #20B9F5 cián, #DC8B10 borostyán. A c:\> motívum a céges prezentációból.
+
+   EGYETLEN FÁJL, több oldallal. A navigáció a címsor #/... részével működik,
+   ezért fájlból megnyitva is jó, és offline is.
+
+   BŐVÍTÉS: a lap alján a PAGES objektum (aloldalak) és a USE_CASES tömb
+   (megoldástár). Egy új bejegyzés hozzáadása elég, minden más magától frissül.
+   ========================================================================== */
+
+:root {
+  --brand:#511B9A; --brand-deep:#321881; --brand-soft:#EDE6F8;
+  --cyan:#1183B4;  --cyan-soft:#E0F2FB;
+  --amber:#A8670A; --amber-soft:#FBF0DC;
+  /* --ink-faint sötétebb, mint amilyen "halvány" színt elsőre választanánk:
+     fehér alapon a világosabb árnyalat 3,4:1-en marad, ami olvashatatlanul kevés */
+  --ink:#12102B; --ink-muted:#605C7C; --ink-faint:#6E6A8A;
+  --bg:#FFFFFF; --surface:#F7F5FB; --surface-2:#FFFFFF; --line:#E4E0EF;
+  --night:#07063E; --on-night:#FFFFFF; --on-night-dim:#B3AECF;
+  --radius:14px; --maxw:1160px;
+  --shadow:0 1px 2px rgba(18,16,43,.06), 0 8px 24px rgba(18,16,43,.06);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --brand:#A98AE8; --brand-deep:#C4ADF2; --brand-soft:#251A3D;
+    --cyan:#58C8F5;  --cyan-soft:#102A3A;
+    --amber:#E0A33F; --amber-soft:#35270F;
+    --ink:#F2F0FA; --ink-muted:#A9A4C4; --ink-faint:#7C7799;
+    --bg:#0B0A1B; --surface:#12102B; --surface-2:#171436; --line:#2A2650;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"] {
+  --brand:#A98AE8; --brand-deep:#C4ADF2; --brand-soft:#251A3D;
+  --cyan:#58C8F5;  --cyan-soft:#102A3A;
+  --amber:#E0A33F; --amber-soft:#35270F;
+  --ink:#F2F0FA; --ink-muted:#A9A4C4; --ink-faint:#7C7799;
+  --bg:#0B0A1B; --surface:#12102B; --surface-2:#171436; --line:#2A2650;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+}
+
+* { box-sizing:border-box; }
+body {
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Open Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:16px; line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4 {
+  font-family:Poppins,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-weight:500; line-height:1.2; text-wrap:balance; margin:0;
+}
+p { margin:0; }
+a { color:inherit; }
+.wrap { max-width:var(--maxw); margin:0 auto; padding:0 24px; }
+
+.prompt {
+  font-family:"JetBrains Mono",ui-monospace,"Courier New",monospace;
+  font-size:.8rem; font-weight:600; letter-spacing:.04em;
+  color:var(--brand); display:block; margin-bottom:14px;
+}
+.prompt::before { content:"c:\\> "; opacity:.55; }
+.prompt::after { content:"_"; animation:blink 1.3s step-end infinite; }
+@keyframes blink { 50% { opacity:0; } }
+
+/* -------------------------------------------------------------- fejléc --- */
+.topbar {
+  position:sticky; top:0; z-index:20;
+  background:color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter:saturate(1.4) blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.topbar .wrap { display:flex; align-items:center; gap:22px; height:60px; }
+.brand {
+  font-family:Poppins,sans-serif; font-weight:600; font-size:1.02rem;
+  text-decoration:none; letter-spacing:-.01em; white-space:nowrap;
+}
+.brand span { color:var(--brand); }
+.topnav { display:flex; gap:20px; flex-wrap:wrap; align-items:center; margin-left:auto; }
+.topnav > a, .dd > button {
+  text-decoration:none; font-size:.9rem; color:var(--ink-muted);
+  padding:4px 0; border-bottom:2px solid transparent;
+  background:none; border-top:0; border-left:0; border-right:0;
+  font-family:inherit; cursor:pointer;
+}
+.topnav > a:hover, .topnav > a.on, .dd > button:hover, .dd > button.on {
+  color:var(--brand); border-bottom-color:var(--brand);
+}
+.topnav > a:focus-visible, .dd > button:focus-visible { outline:2px solid var(--cyan); outline-offset:3px; }
+
+/* lenyíló menü a termékekhez */
+.dd { position:relative; }
+.dd > button::after { content:" ▾"; font-size:.8em; }
+.dd-panel {
+  position:absolute; right:0; top:calc(100% + 12px); z-index:30;
+  min-width:250px; padding:8px;
+  background:var(--surface-2); border:1px solid var(--line); border-radius:12px;
+  box-shadow:var(--shadow); display:none; flex-direction:column;
+}
+.dd-panel.open { display:flex; }
+.dd-panel a {
+  text-decoration:none; font-size:.9rem; color:var(--ink);
+  padding:9px 12px; border-radius:8px;
+}
+.dd-panel a:hover, .dd-panel a.on { background:var(--brand-soft); color:var(--brand); }
+.dd-panel a:focus-visible { outline:2px solid var(--cyan); outline-offset:-2px; }
+
+/* ----------------------------------------------------------------- hős --- */
+.hero {
+  background:var(--night);
+  background-image:
+    radial-gradient(900px 460px at 86% -18%, rgba(81,27,154,.55), transparent 64%),
+    radial-gradient(620px 340px at 6% 112%, rgba(32,185,245,.16), transparent 62%);
+  color:var(--on-night); padding:72px 0 64px;
+}
+.hero .prompt { color:#9C8DFF; }
+.hero h1 { font-size:clamp(1.95rem,4.4vw,3rem); max-width:21ch; margin-bottom:18px; }
+.hero p { color:var(--on-night-dim); max-width:62ch; font-size:1.05rem; }
+.hero-meta {
+  display:flex; flex-wrap:wrap; gap:10px 26px; margin-top:28px;
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.76rem; letter-spacing:.03em; color:var(--on-night-dim);
+}
+.hero-meta span { display:inline-flex; align-items:center; gap:8px; }
+.hero-meta span::before { content:""; width:6px; height:6px; border-radius:50%; background:#9C8DFF; flex:none; }
+
+/* ------------------------------------------------------------ szekciók --- */
+section { padding:64px 0; }
+.tint { background:var(--surface); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.sec-head { max-width:64ch; margin-bottom:32px; }
+.sec-head h2 { font-size:clamp(1.45rem,2.6vw,2rem); margin-bottom:12px; }
+.sec-head p { color:var(--ink-muted); }
+
+/* --------------------------------------------------------------- kártya --- */
+.cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; }
+.cards.four { grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); }
+.tile {
+  background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius);
+  padding:26px 24px 22px; box-shadow:var(--shadow);
+  display:flex; flex-direction:column; gap:11px;
+  text-decoration:none; color:inherit;
+  transition:border-color .15s, transform .15s;
+}
+a.tile:hover { border-color:var(--brand); transform:translateY(-2px); }
+a.tile:focus-visible { outline:2px solid var(--cyan); outline-offset:3px; }
+.tag {
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.68rem; font-weight:600; letter-spacing:.07em; text-transform:uppercase;
+  padding:5px 10px; border-radius:999px; align-self:flex-start;
+  background:var(--brand-soft); color:var(--brand);
+}
+.tag.amber { background:var(--amber-soft); color:var(--amber); }
+.tag.cyan  { background:var(--cyan-soft);  color:var(--cyan); }
+.tile h3 { font-size:1.16rem; }
+.tile p { color:var(--ink-muted); font-size:.94rem; }
+.tile ul { margin:2px 0 0; padding-left:18px; color:var(--ink-muted); font-size:.91rem; }
+.tile li { margin-bottom:4px; }
+.more {
+  margin-top:auto; padding-top:12px;
+  font-family:Poppins,sans-serif; font-weight:500; font-size:.9rem; color:var(--brand);
+}
+.more::after { content:" →"; }
+
+/* ------------------------------------------------------------ katalógus --- */
+.controls { display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin-bottom:22px; }
+.chips { display:flex; flex-wrap:wrap; gap:8px; }
+.chip {
+  font-family:"JetBrains Mono",ui-monospace,monospace; font-size:.78rem; font-weight:600;
+  padding:8px 14px; border-radius:999px;
+  border:1px solid var(--line); background:var(--surface-2); color:var(--ink-muted);
+  cursor:pointer; transition:background .15s,color .15s,border-color .15s;
+}
+.chip:hover { border-color:var(--brand); color:var(--brand); }
+.chip[aria-pressed="true"] { background:var(--brand); border-color:var(--brand); color:#fff; }
+:root[data-theme="dark"] .chip[aria-pressed="true"] { color:#14102B; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .chip[aria-pressed="true"] { color:#14102B; }
+}
+.chip:focus-visible, .search:focus-visible { outline:2px solid var(--cyan); outline-offset:2px; }
+.search {
+  flex:1 1 220px; min-width:200px; padding:9px 14px; border-radius:999px;
+  border:1px solid var(--line); background:var(--surface-2); color:var(--ink);
+  font-family:inherit; font-size:.9rem;
+}
+.search::placeholder { color:var(--ink-faint); }
+.count {
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.78rem; color:var(--ink-faint); margin-bottom:16px;
+}
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:18px; }
+.uc {
+  background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius);
+  padding:22px; display:flex; flex-direction:column; gap:9px;
+}
+.uc .area {
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.67rem; font-weight:600; letter-spacing:.06em; text-transform:uppercase;
+  padding:4px 9px; border-radius:6px; align-self:flex-start;
+  background:var(--brand-soft); color:var(--brand);
+}
+.uc h3 { font-size:1.04rem; }
+.uc p { color:var(--ink-muted); font-size:.92rem; }
+.gain {
+  margin-top:auto; padding-top:11px; border-top:1px dashed var(--line);
+  font-size:.88rem; color:var(--ink);
+}
+.gain b { font-weight:600; color:var(--brand); }
+.empty { color:var(--ink-muted); padding:36px 0; }
+
+/* -------------------------------------------------------------- lépések --- */
+.steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:20px; counter-reset:s; }
+.step { padding-top:15px; border-top:2px solid var(--brand); }
+.step::before {
+  counter-increment:s; content:counter(s,decimal-leading-zero);
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.73rem; font-weight:600; color:var(--brand); display:block; margin-bottom:7px;
+}
+.step h3 { font-size:1.03rem; margin-bottom:7px; }
+.step p { color:var(--ink-muted); font-size:.92rem; }
+.step .when {
+  display:block; margin-top:8px;
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.72rem; color:var(--ink-faint);
+}
+
+/* ---------------------------------------------------------------- kiemelt --- */
+.stat {
+  background:var(--surface-2); border:1px solid var(--line); border-left:4px solid var(--brand);
+  border-radius:var(--radius); padding:22px 24px; margin-top:28px; max-width:70ch;
+}
+.stat b { font-family:Poppins,sans-serif; font-weight:600; font-size:1.3rem; color:var(--brand); display:block; }
+.stat span { color:var(--ink-muted); font-size:.94rem; }
+
+/* ---------------------------------------------------------- csomag ------- */
+.pack {
+  background:var(--surface-2); border:1px solid var(--line);
+  border-top:4px solid var(--brand); border-radius:var(--radius);
+  padding:30px 30px 26px; box-shadow:var(--shadow); max-width:820px;
+}
+.pack-head { display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 20px; margin-bottom:6px; }
+.pack-head h3 { font-size:1.45rem; }
+.pack-price {
+  font-family:Poppins,sans-serif; font-weight:600; font-size:1.3rem; color:var(--brand);
+  white-space:nowrap;
+}
+.pack-price small { font-weight:400; font-size:.72em; color:var(--ink-muted); }
+.pack > p { color:var(--ink-muted); font-size:.96rem; margin-bottom:20px; }
+.pack ol { margin:0; padding:0; list-style:none; counter-reset:pk; display:flex; flex-direction:column; gap:16px; }
+.pack li { display:flex; gap:14px; align-items:flex-start; }
+.pack li::before {
+  counter-increment:pk; content:counter(pk);
+  font-family:"JetBrains Mono",ui-monospace,monospace; font-size:.74rem; font-weight:600;
+  color:#fff; background:var(--brand);
+  width:24px; height:24px; border-radius:50%; flex:none;
+  display:flex; align-items:center; justify-content:center; margin-top:2px;
+}
+:root[data-theme="dark"] .pack li::before { color:#14102B; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .pack li::before { color:#14102B; } }
+.pack li b { display:block; font-family:Poppins,sans-serif; font-weight:500; font-size:1rem; }
+.pack li span { color:var(--ink-muted); font-size:.93rem; }
+
+/* -------------------------------------------------------------- kapcsolat --- */
+.person {
+  display:flex; flex-wrap:wrap; gap:6px 28px; align-items:baseline;
+  margin-top:24px; padding:20px 24px;
+  border:1px solid rgba(255,255,255,.18); border-radius:var(--radius);
+}
+.person .who { font-family:Poppins,sans-serif; font-weight:500; font-size:1.1rem; color:var(--on-night); }
+.person .role { color:var(--on-night-dim); font-size:.9rem; }
+.person a {
+  font-family:"JetBrains Mono",ui-monospace,monospace; font-size:.92rem;
+  color:#C9BCFF; text-decoration:none; border-bottom:1px solid rgba(201,188,255,.4);
+}
+.person a:hover { color:#fff; border-bottom-color:#fff; }
+.person a:focus-visible { outline:2px solid #9C8DFF; outline-offset:3px; }
+
+/* ------------------------------------------------------------------ gyik --- */
+.faq { display:flex; flex-direction:column; gap:10px; max-width:80ch; }
+details {
+  background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:0 18px;
+}
+summary {
+  cursor:pointer; padding:15px 0; font-family:Poppins,sans-serif; font-weight:500;
+  list-style:none; display:flex; align-items:center; gap:12px;
+}
+summary::-webkit-details-marker { display:none; }
+summary::after {
+  content:"+"; margin-left:auto; color:var(--brand);
+  font-family:"JetBrains Mono",monospace; font-size:1.1rem; flex:none;
+}
+details[open] summary::after { content:"–"; }
+summary:focus-visible { outline:2px solid var(--cyan); outline-offset:2px; border-radius:4px; }
+details p { padding:0 0 18px; color:var(--ink-muted); font-size:.95rem; max-width:66ch; }
+
+/* ------------------------------------------------------------------ záró --- */
+.cta { background:var(--night); color:var(--on-night); }
+.cta .prompt { color:#9C8DFF; }
+.cta h2 { font-size:clamp(1.45rem,2.6vw,2rem); margin-bottom:14px; }
+.cta p { color:var(--on-night-dim); max-width:62ch; }
+.cta-links { display:flex; flex-wrap:wrap; gap:12px; margin-top:24px; }
+.btn {
+  display:inline-block; padding:12px 22px; border-radius:999px;
+  font-family:Poppins,sans-serif; font-weight:500; font-size:.94rem; text-decoration:none;
+  background:#6C3FD1; color:#fff; border:1px solid transparent; transition:background .15s;
+}
+.btn:hover { background:#7d52dd; }
+.btn.ghost { background:transparent; border-color:rgba(255,255,255,.28); color:var(--on-night); }
+.btn.ghost:hover { background:rgba(255,255,255,.08); }
+.btn:focus-visible { outline:2px solid #9C8DFF; outline-offset:3px; }
+
+.back {
+  display:inline-block; margin-bottom:18px; text-decoration:none;
+  font-family:"JetBrains Mono",ui-monospace,monospace; font-size:.78rem; color:var(--on-night-dim);
+}
+.back:hover { color:#fff; }
+.back::before { content:"← "; }
+
+footer { padding:28px 0 44px; color:var(--ink-faint); font-size:.85rem; }
+footer p + p { margin-top:6px; }
+
+@media (prefers-reduced-motion: reduce) { * { animation:none !important; transition:none !important; } }
+@media (max-width: 640px) {
+  .topbar .wrap { height:auto; padding-top:10px; padding-bottom:10px; flex-wrap:wrap; gap:10px; }
+  .topnav { margin-left:0; gap:14px; }
+}
+</style>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#/">devertix<span>&nbsp;AI</span></a>
+    <nav class="topnav" id="topnav"></nav>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<footer>
+  <div class="wrap">
+    <p>Devertix &middot; 2144 Kerepes, Szabadság út 252/b &middot; sales@devertix.com</p>
+    <p>Az ügyfeleink nevét bizalmasan kezeljük — igény esetén referenciabeszélgetést szervezünk.</p>
+  </div>
+</footer>
+
+<script>
+/* ===========================================================================
+   ALOLDALAK
+   ---------------------------------------------------------------------------
+   Új aloldal: vegyél fel egy új kulcsot a PAGES-be, és ha a fejlécben is
+   látszódjon, írd be a NAV tömbbe. Minden mező elhagyható a címen kívül.
+
+     kind   : "megoldas" (a három belépő) vagy "alkalmazas" (a négy alkalmazás)
+     lead   : a cím alatti bevezető
+     stat   : kiemelt eredmény {value, label} — csak valós adatot tegyünk ide!
+     does   : "Mit csinál a rendszer" blokkok
+     steps  : bevezetési szakaszok {h, p, when}
+     why    : "Miért mi" pontok
+     faq    : gyakori kérdések {q, a}
+   ========================================================================= */
+const PAGES = {
+
+  /* ------------------------------------------------------------- KKV --- */
+  "kkv": {
+    kind: "megoldas", tagClass: "",
+    nav: "KKV",
+    tag: "AI bevezetés — KKV",
+    title: "AI bevezetés kis- és középvállalkozásoknak",
+    lead: "Egy 10–100 fős cégnél az AI ott térül meg, ahol a legtöbb manuális, ismétlődő és monoton feladat van. Ezek időigényesek, magas rajtuk a hibázási esély, és a monotonitás miatt a fluktuáció is nagyobb.",
+    intro: "Ezért nem azzal kezdünk, hogy mit lehetne megépíteni, hanem azzal, hogy hol megy el nálatok a legtöbb idő. Az első lépés egy fix áras csomag, aminek a végén nemcsak egy működő automatizáció lesz a kezetekben, hanem egy számokkal alátámasztott terv is a folytatásra.",
+    does: [
+      { h: "Időigényes", p: "Az ismétlődő feladatok napi szinten visznek el órákat úgy, hogy közben nem keletkezik belőlük többletérték. Ez az az idő, ami visszanyerhető." },
+      { h: "Magas a hibázási esély", p: "Ahol sokszor kell ugyanazt kézzel átvinni egyik helyről a másikra, ott elkerülhetetlen a hiba. A javítás pedig többe kerül, mint az eredeti munka." },
+      { h: "Nagyobb a fluktuáció", p: "A monoton munkát senki nem szereti hosszú távon csinálni. Ha ezt leveszitek a kollégákról, azzal nemcsak időt nyertek, hanem embereket is megtartotok." },
+      { h: "A rendszer a tiétek marad", p: "Minden megoldást a ti saját környezetetekben építünk fel. Az adat nem kerül ki, és nem tanítunk vele modellt." }
+    ],
+    doesTitle: "Miért pont ezeken a folyamatokon éri meg kezdeni",
+    pack: {
+      name: "AI Starter csomag",
+      price: "1.900.000 Ft",
+      vat: "+ ÁFA",
+      note: "Fix áras belépő. A végén működő automatizáció és egy konkrét terv van a kezetekben — akkor is, ha nem velünk folytatjátok.",
+      items: [
+        { h: "Felmérés és a use case kiválasztása",
+          p: "Azonosítjuk a legnagyobb hatású manuális munkafolyamatokat, és azokat automatizáljuk először. Nem azt nézzük, mi a legérdekesebb műszakilag, hanem azt, hol van a legtöbb visszanyerhető idő." },
+        { h: "KPI meghatározása",
+          p: "Még az ajánlat elfogadása előtt rögzítjük, mit várunk az automatizálástól. Ha a várható nyereség nem elég, azt megmondjuk — akkor ne csináljuk meg feleslegesen." },
+        { h: "Egy automatizáció megvalósítása",
+          p: "A kiválasztott folyamatot élesbe visszük, komplex rendszerintegrációk nélkül. Ez a csomag után is működik és használható marad." },
+        { h: "Ajánlat a folytatásra",
+          p: "A felmérés során megjelölt további felhasználási esetekre ütemtervet és ajánlatot adunk — így látjátok, mi jön ezután, és milyen sorrendben éri meg haladni." }
+      ]
+    },
+    steps: [
+      { h: "AI Starter csomag", when: "fix áron", p: "Felmérés, a use case kiválasztása, a KPI rögzítése és egy folyamat automatizálása. A végén ajánlatot adunk a további felhasználási esetekre." },
+      { h: "A következő folyamatok", when: "a roadmap szerint", p: "A felmérésen megjelölt esetek közül azzal folytatjuk, amelyik a legtöbbet hozza. Minden szakasz után dönthettek arról, hogy megyünk-e tovább." },
+      { h: "Üzemeltetés és bővítés", when: "folyamatos", p: "Ami élesben fut, azt üzemeltetjük és karbantartjuk, ha kéritek. Az AI-képesség pedig területről területre terjed a cégben." }
+    ],
+    why: [
+      { h: "Magunkon kezdtük", p: "2022 óta építünk AI-t, és először a saját számlázásunkat, toborzásunkat és ajánlatírásunkat automatizáltuk. Nem ügyfélen tanultuk meg." },
+      { h: "Nem doboz, de nem is nulláról", p: "Van kész alapunk, amit a ti folyamatotokra szabunk. Ezért tud hetekben mérhető lenni, nem hónapokban." },
+      { h: "Auditált háttér", p: "AWS Advanced Tier partner, ISO 9001 és ISO/IEC 27001 tanúsítással, ~40 fős mérnökcsapattal." },
+      { h: "Felméréstől az üzemeltetésig", p: "Ugyanaz a csapat viszi végig. Nincs átadás-átvételi szakadék a projekt közepén." }
+    ],
+    faq: [
+      { q: "Mekkora cégnek éri meg egyáltalán?", a: "Ott van értelme, ahol egy folyamat ismétlődik, és havonta legalább néhány tucatszor lefut. Nem a cégméret dönti el, hanem a mennyiség és az, hogy mennyire szabályos a folyamat. Ha nem biztos, hogy nálatok megvan ez, azt a felmérés első hetében kiderítjük." },
+      { q: "Kell hozzá saját IT-csapat?", a: "Nem. Kell viszont egy döntéshozó, és egy kolléga, aki heti pár órában meg tudja mondani, hogy jó-e, amit a rendszer kiad. Ez utóbbi nélkül semmilyen bevezetés nem működik." },
+      { q: "Mennyi idő, mire látunk valamit?", a: "Az első kipróbálás 1–2 hét, összetettebb integráció nélkül. Egy éles folyamat jellemzően 4–8 hét alatt jut el odáig, hogy a napi működés része legyen." },
+      { q: "Mi lesz az adatainkkal?", a: "A megoldás a ti saját felhőkörnyezetetekben épül fel. Az adat nem hagyja el, és nem használjuk fel modell tanítására. Ahol a szabályozás megkívánja, minden lépés visszakereshető marad." },
+      { q: "Mi van, ha nem válik be?", a: "A KPI-t még az ajánlat elfogadása előtt rögzítjük. Ha már ott látszik, hogy a várható nyereség nem elég, azt megmondjuk, és nem csináljuk meg feleslegesen. A csomag után pedig ti döntötök a folytatásról — ami elkészült, az akkor is a tiétek marad." },
+      { q: "Mennyibe kerül?", a: "Az AI Starter csomag 1.900.000 Ft + ÁFA, fix áron. Ez tartalmazza a felmérést, a KPI meghatározását, egy folyamat automatizálását és a folytatásra szóló ajánlatot. A további szakaszok ára a folyamat összetettségétől és az integrációk számától függ — ezekre a csomag végén adunk ajánlatot." }
+    ]
+  },
+
+  /* --------------------------------------------------------- EU AI Act --- */
+  "ai-act": {
+    kind: "megoldas", tagClass: "amber",
+    nav: "EU AI Act",
+    tag: "EU AI Act megfelelés",
+    title: "EU AI Act megfelelés a gyakorlatban",
+    lead: "A jogszabály nem az AI-t tiltja, hanem kockázat szerint sorolja be. A besorolás dönti el, mit kell dokumentálni, mit kell naplózni, és hol kell embernek döntenie. Ezt érdemes a projekt elején tisztázni, nem az élesítés előtti héten.",
+    intro: "A legtöbb KKV-nál használt AI alacsony kockázatú kategóriába esik, és nem kell tőle megijedni. Van viszont néhány terület — például a toborzás — ahol szigorúbb szabályok élnek, és ezt jobb előre tudni.",
+    does: [
+      { h: "Besorolás folyamatonként", p: "Végigvesszük, melyik tervezett felhasználás melyik kockázati kategóriába esik. Nem a cégre adunk egy címkét, hanem folyamatonként nézzük." },
+      { h: "Ami magas kockázatú, arra külön szabály", p: "A toborzási és a munkavállalókat érintő döntéstámogatás szigorúbb kategória. Ott a rendszer előkészít és javasol, a döntés emberé marad — és ezt bizonyíthatóan így is építjük meg." },
+      { h: "Naplózás a tervezés részeként", p: "Visszakereshető marad, hogy a rendszer mit válaszolt, mire alapozva és kinek. Ez utólag nehezen pótolható, ezért az architektúra része." },
+      { h: "Adatvédelem együtt kezelve", p: "A GDPR-szempontokat nem külön körben nézzük meg. Ide tartozik az is, hogy ki mit láthat: aki egy dokumentumhoz nem fér hozzá, annak a rendszer sem mond belőle semmit." }
+    ],
+    steps: [
+      { h: "Áttekintés", when: "a felmérés része", p: "Összeírjuk, hol használnátok AI-t, és mindegyikhez hozzárendeljük a kockázati kategóriát és a belőle következő teendőket." },
+      { h: "Beépítés a megoldásba", when: "a fejlesztéssel együtt", p: "A naplózás, az emberi jóváhagyási pont és a jogosultságkezelés a rendszer része lesz, nem utólagos ráaggatás." },
+      { h: "Ellenőrzés élesítés előtt", when: "az átadásnál", p: "Végigmegyünk egy listán, hogy ami a besorolásból következik, az tényleg működik is." }
+    ],
+    why: [
+      { h: "Szabályozott környezetben dolgozunk", p: "Zárt, auditálható AI-környezetet üzemeltetünk pénzügyi ügyfélnél 2025 áprilisa óta, teljes naplózással és ügyfelenkénti elkülönítéssel." },
+      { h: "ISO-tanúsított működés", p: "ISO 9001 és ISO/IEC 27001 — a megfelelés nálunk nem projektfeladat, hanem a mindennapi működés része." },
+      { h: "Nem ígérünk többet a kelleténél", p: "Ha egy felhasználás alacsony kockázatú, azt mondjuk meg, és nem adunk el rá felesleges megfelelési kört." }
+    ],
+    faq: [
+      { q: "Vonatkozik ránk egyáltalán az EU AI Act?", a: "Ha AI-t használtok az üzleti működésetekben, akkor valamilyen szinten igen — de a legtöbb tipikus felhasználás (dokumentumfeldolgozás, belső keresés) alacsony kockázatú, és nem jár nehéz kötelezettséggel. A besorolás megmutatja, hol van mégis teendő." },
+      { q: "Mi számít magas kockázatúnak?", a: "Többek között a toborzás és a munkavállalókat érintő döntések támogatása. Itt kötelező az emberi felülvizsgálat, és a döntés indokolhatósága is követelmény." },
+      { q: "Mit kell dokumentálni?", a: "Nagyjából azt, hogy mire használjátok a rendszert, milyen adaton dolgozik, ki felügyeli, és hogyan kereshető vissza, mi történt. A besorolástól függ, milyen mélységben." },
+      { q: "A meglévő AI-megoldásunkat is meg tudjátok nézni?", a: "Igen. Nem feltétel, hogy mi építettük legyen — a besorolás és a hiányok feltárása önálló munka is lehet." },
+      { q: "Mi a helyzet a GDPR-ral?", a: "A kettőt együtt kezeljük, mert a gyakorlatban ugyanazokat a kérdéseket teszik fel: milyen adat, hol tárolva, ki fér hozzá, meddig őrizzük." }
+    ]
+  },
+
+  /* -------------------------------------------------------- vállalati --- */
+  "vallalati": {
+    kind: "megoldas", tagClass: "cyan",
+    nav: "Vállalati",
+    tag: "AI bevezetés — vállalati",
+    title: "AI nagyvállalati és szabályozott környezetben",
+    lead: "Nagyobb szervezetnél az AI ritkán egyetlen folyamatról szól. Ott a kérdés az, hogyan illeszkedik a meglévő rendszerekhez, mit kell naplózni, és hogyan lehet több területen ugyanarra az alapra építeni.",
+    intro: "Ugyanaz a mérnökcsapat viszi, mint a kisebb projekteket — a különbség az előkészítés mélységében és abban van, hogy itt AWS-forrás is bevonható a projektbe.",
+    does: [
+      { h: "Zárt, auditálható környezet", p: "Saját felhőkörnyezet, ahol minden lépés visszakereshető, és az egyes szervezeti egységek vagy ügyfelek adata teljesen elkülönül egymástól." },
+      { h: "Illeszkedés a meglévő rendszerekhez", p: "Az AI a meglévő architektúrába épül, nem mellé. Nincs párhuzamos rendszer, amit külön kell karbantartani." },
+      { h: "Több terület, egy alap", p: "Ami az első folyamatnál elkészül — a betöltés, a jogosultságkezelés, a naplózás — azt a következő területek is használják." },
+      { h: "AWS-finanszírozás", p: "AWS Migration Acceleration Program partnerként a finanszírozás igénylését, a mérföldkő-követést és a riportálást mi visszük. Ezt az ügyfél önállóan nem tudja lehívni." }
+    ],
+    steps: [
+      { h: "Felmérés és üzleti eset", when: "", p: "Folyamatfelmérés, adatforrások, integrációs pontok és megtérülési számítás. Ha AWS-projektként fut, a finanszírozás igénylése is itt indul." },
+      { h: "Alapok és pilot", when: "", p: "Landing Zone, biztonsági alapok, jogosultsági modell — és egy pilot, ami valós adaton mutatja meg az eredményt." },
+      { h: "Bevezetés és üzemeltetés", when: "", p: "Hullámokban ütemezett élesítés, mérhető célszámokkal, majd folyamatos üzemeltetés és támogatás." }
+    ],
+    why: [
+      { h: "Bank-léptékű tapasztalat", p: "Három nagybank informatikai rendszereit egyesítettük egyetlen AWS-alapú platformon, a pénzügyi szektor szabályozási elvárásai mellett." },
+      { h: "AWS Advanced Tier partner", p: "Hat auditált AWS-partnerprogram — ezek mögött tanúsított mérnökök és az AWS által ellenőrzött, éles ügyfélprojektek állnak." },
+      { h: "Mélység az üzemeltetésben is", p: "Nemcsak AWS-, hanem Kubernetes-tanúsítványokkal is dolgozunk. Van kollégánk, aki mind az öt Kubernetes-vizsgát megszerezte." },
+      { h: "Mérhető KPI-ok, nem demók", p: "Minden projektnél rögzítünk kiindulási értéket és célszámot. Az eredmény számonkérhető." }
+    ],
+    faq: [
+      { q: "Mit jelent az AWS-finanszírozás a gyakorlatban?", a: "Az AWS pénzügyi ösztönzőkkel támogatja a migrációs és modernizációs projekteket, de ezt csak partneren keresztül lehet lehívni. A papírmunkát — igénylés, mérföldkő-követés, címkézés — mi visszük. A konkrét mértéket mindig az aktuális AWS-feltételek szabják meg." },
+      { q: "Le kell cserélnünk a meglévő rendszereinket?", a: "Nem. Az a cél, hogy az AI a meglévő rendszerekhez illeszkedjen. Ha valahol nincs API, akkor exporton keresztül vagy más kerülőúton oldjuk meg." },
+      { q: "Hogyan biztosítjátok, hogy egy szervezeti egység ne lássa a másik adatait?", a: "A meglévő jogosultságok öröklődnek: aki egy dokumentumhoz nem fér hozzá, annak a rendszer sem válaszol belőle. Több ügyfelet kiszolgáló környezetben ez teljes elkülönítést jelent." },
+      { q: "Kötődünk egy adott technológiához?", a: "Nem. Technológia- és modellfüggetlenül dolgozunk, és a környezet a tiétek marad." }
+    ]
+  },
+
+  /* ------------------------------------------------- számlafeldolgozás --- */
+  "szamlafeldolgozas": {
+    kind: "alkalmazas",
+    nav: "Számlafeldolgozás",
+    tag: "Alkalmazás",
+    title: "Számlafeldolgozás automatizálása",
+    lead: "A bejövő számláknál ritkán a begépelés viszi az időt. Sokkal inkább az utánajárás: hova tartozik, van-e hozzá megrendelés, ki hagyja jóvá, és miért nem stimmel az összeg.",
+    stat: { value: "A feldolgozási idő a harmadára csökken", label: "Ez a tapasztalatunk több projektből. Hogy nálatok ez hány órát jelent, azt a saját számláitokon mérjük meg — nem iparági átlagból számoljuk." },
+    does: [
+      { h: "Kiolvasás, a tételsorokkal együtt", p: "E-mailből, szállítói portálról és szkennelt papírról is. A fejadatok a legtöbb rendszernek nem gond — a tételsorok viszont igen, és a különbség itt látszik meg." },
+      { h: "Összevetés a megrendeléssel", p: "A számlát összeveti a megrendeléssel és a szállítólevéllel, ellenőrzi a matematikát és a szerződéses árat, és kiszűri a kétszer beérkezett számlákat." },
+      { h: "Könyvelési javaslat", p: "A költséghelyre és a főkönyvi számra javaslatot ad — a ti korábbi számláitokból tanulva, nem előre beégetett szabályok alapján." },
+      { h: "Ami kilóg, az emberé", p: "Ha a rendszer bizonytalan, a tétel kollégához kerül. A javításokból pedig tanul, tehát ugyanaz a hiba egyre ritkábban jön elő." }
+    ],
+    steps: [
+      { h: "Mérés a saját számláitokon", when: "1–2 hét", p: "100–200 valós számlán megmutatjuk, mit olvas ki pontosan a rendszer, és hol téved. Ebből derül ki, mennyi automatizálás reális nálatok." },
+      { h: "Élesítés egy körben", when: "4–8 hét", p: "Bekötjük a beérkezési csatornákat és a könyvelőrendszert, felállítjuk a jóváhagyási utakat, és élesben futtatjuk emberi ellenőrzés mellett." },
+      { h: "Kiterjesztés", when: "folyamatos", p: "Ahogy nő a bizalom, egyre több számla megy át beavatkozás nélkül, és a kollégák csak a kivételekkel foglalkoznak." }
+    ],
+    why: [
+      { h: "A hazai sajátosságokkal együtt", p: "A NAV Online Számla adatai nemcsak forrásként, hanem ellenőrzési pontként is használhatók: ami ott nincs meg, az gyanús." },
+      { h: "Nem cseréljük le a könyvelőrendszert", p: "Ahol van API, oda közvetlenül átadjuk az adatot. Ahol nincs, ott strukturált exporttal oldjuk meg." },
+      { h: "A pénzügyi haszon nem csak óra", p: "A gyorsabb jóváhagyás miatt kevesebb késedelmi kamat és kevesebb elveszett korai fizetési kedvezmény keletkezik — és a hónapzárás is gyorsul." }
+    ],
+    faq: [
+      { q: "Hány számlától éri meg?", a: "Nagyjából havi 150 bejövő számla fölött szokott egyértelmű lenni, de nem csak a darabszám számít: ha a jóváhagyási kör hosszú, kisebb mennyiségnél is sokat lehet nyerni." },
+      { q: "Mi történik, ha a rendszer téved?", a: "Minden tételnél látszik, mennyire biztos a kiolvasásban. Ami küszöb alatt marad, az emberhez kerül, és a javítás visszatáplálódik. A cél nem a nulla hiba, hanem az, hogy a hiba biztosan kiderüljön a könyvelés előtt." },
+      { q: "Szkennelt és külföldi számlákkal is elboldogul?", a: "Igen, szkennelt anyagból és fotóról is olvas, több nyelven és több devizában. A gyengébb minőségű szkennek nagyobb arányban kerülnek emberi ellenőrzésre." },
+      { q: "Bele kell nyúlni a könyvelőrendszerünkbe?", a: "Nem kell lecserélni semmit. Az integráció a meglévő rendszerhez igazodik, és ha nincs hozzá interfész, exporton keresztül oldjuk meg." },
+      { q: "Hol lesznek a számláink?", a: "A ti saját környezetetekben. Az adat nem kerül ki, és nem tanítunk vele modellt." }
+    ]
+  },
+
+  /* --------------------------------------------- dokumentumfeldolgozás --- */
+  "dokumentumfeldolgozas": {
+    kind: "alkalmazas",
+    nav: "Dokumentumok",
+    tag: "Alkalmazás",
+    title: "Dokumentumfeldolgozás és adatkinyerés",
+    lead: "Attól, hogy a szerződés megvan PDF-ben, még nem tudtok rákérdezni. A dokumentumfeldolgozás lényege, hogy a fájlokból lekérdezhető adat legyen — és hogy a rendszer ne csak olvasson, hanem dolgozzon is velük.",
+    intro: "Szerződés, teljesítésigazolás, önéletrajz, szállítólevél, jegyzőkönyv, műszaki dokumentáció. A feldolgozás gerince ugyanaz, a haszon viszont dokumentumtípusonként más — és sokszor nem munkaóra, hanem elkerült veszteség.",
+    does: [
+      { h: "Felismerés és rendezés", p: "Megállapítja, milyen dokumentum érkezett és kitől, majd a megfelelő helyre irányítja. A duplikátumot kiszűri." },
+      { h: "Kiolvasás típusonként", p: "Szerződésnél a futamidő, a felmondási határidő és a kötbér; teljesítésigazolásnál a mérföldkő; önéletrajznál a szakmai tartalom. Minden típushoz más mezőkészlet tartozik." },
+      { h: "Ellenőrzés és összehasonlítás", p: "Végigmegy egy szempontrendszeren, és megmutatja, mi tér el a sablontól, a korábbi verziótól vagy attól, amiben megállapodtatok." },
+      { h: "Tervezet és összefoglaló", p: "A saját mintáitokból tervezetet készít, a hosszú anyagból pedig döntés előtti összefoglalót — a végleges szöveget ember hagyja jóvá." },
+      { h: "Kereshető marad", p: "A feldolgozott anyag utána kereshető is: a válasz mellett mindig ott van, melyik dokumentum melyik pontjából származik." }
+    ],
+    steps: [
+      { h: "Dokumentumtípus kiválasztása", when: "az elején", p: "Azzal kezdünk, amiből a legtöbb van, vagy amelyiknél a legnagyobb a kockázat. Egy típussal, nem mindegyikkel egyszerre." },
+      { h: "Mérés valós mintán", when: "1–2 hét", p: "100–200 saját dokumentumon megmutatjuk, mit nyer ki a rendszer és milyen pontossággal." },
+      { h: "Élesítés és bővítés", when: "4–8 hét", p: "Az első típus élesbe kerül, utána jöhet a következő — ugyanarra az alapra építve." }
+    ],
+    why: [
+      { h: "Nem csak kiolvas", p: "Ellenőriz, összehasonlít, összefoglal, tervezetet készít és figyeli a határidőket. A legtöbb megoldás megáll az első lépésnél." },
+      { h: "A jogosultságok érvényben maradnak", p: "Aki egy dokumentumot nem láthat, annak a rendszer sem mond belőle semmit. Ezen bukik el a legtöbb házilag összerakott megoldás." },
+      { h: "Ahol a jogszabály szigorúbb, ott óvatosabbak vagyunk", p: "Önéletrajzoknál a rendszer előkészít és javasol, de a döntés emberé marad — ezt az EU AI Act is így kívánja." }
+    ],
+    faq: [
+      { q: "Milyen dokumentumtípusokkal dolgozik?", a: "Gyakorlatilag bármivel, aminek ismétlődő a szerkezete: szerződés, teljesítésigazolás, árajánlat, önéletrajz, szállítólevél, jegyzőkönyv, biztosítási kötvény, műszaki dokumentáció. Egy új típus betanítása nem jár új rendszerrel." },
+      { q: "Miben más ez, mint egy szövegfelismerő?", a: "A szövegfelismerés csak betűket ad vissza. Itt a rendszer érti is a szerkezetet: tudja, mi a fizetési határidő, összeveti a szerződéssel, és jelez, ha valami hiányzik." },
+      { q: "Papíron érkező anyaggal is működik?", a: "Igen, szkennelve. A gyenge minőségű másolatok nagyobb arányban kerülnek emberi ellenőrzésre — ezt a mérési szakaszban látni fogjátok." },
+      { q: "Mi lesz azzal, amit a rendszer nem tud eldönteni?", a: "Emberhez kerül, megjelölve, hogy melyik mezőnél bizonytalan. A javításokból tanul, tehát az arány idővel javul." },
+      { q: "Kereshetővé is teszi a régi anyagainkat?", a: "Igen. A már feldolgozott dokumentumok kereshető tudásbázist alkotnak, forrásmegjelöléssel — így visszamenőleg is meg lehet találni, mit vállaltatok egy adott ügyfélnél." }
+    ]
+  },
+
+  /* ------------------------------------------------------- ajánlatírás --- */
+  "ajanlatkeszites": {
+    kind: "alkalmazas",
+    nav: "Ajánlatkészítés",
+    tag: "Alkalmazás",
+    title: "Ajánlatkészítés automatizálása",
+    lead: "Az ajánlatírás nagy része nem gondolkodás, hanem keresgélés: hol van a hasonló korábbi ajánlat, mennyi volt akkor az ár, mit ígértünk benne. Ez az a rész, amit a rendszer át tud venni.",
+    stat: { value: "Évi ~250 tender, egyenként 6–8 óra kézi munka", label: "Ennyiről indult egy építőipari ügyfelünk, ahol az alvállalkozói árakat Word-, PDF- és Excel-fájlokból gyűjtötték ki kézzel. A megoldás élesben fut, havi támogatási szerződéssel." },
+    does: [
+      { h: "Megkeresi a hasonló korábbi ajánlatokat", p: "A beérkező megkeresés alapján előhozza, mit adtatok hasonló feladatra korábban, milyen áron és milyen feltételekkel." },
+      { h: "Összeállítja a tervezetet", p: "A korábbi anyagokból és az érvényes árlistából összerak egy első változatot — a kolléga ezt már csak átnézi, nem nulláról írja." },
+      { h: "Kigyűjti a bemenő adatokat", p: "Alvállalkozói árakat, műszaki tartalmat és határidőket szed össze a beérkezett fájlokból, akkor is, ha azok különböző formátumban jöttek." },
+      { h: "Ellenőrzi a számokat", p: "Átnézi a képleteket és az összesítéseket, és jelez, ha valami nem stimmel — ez az a hiba, ami kézi munkánál a legdrágább." }
+    ],
+    steps: [
+      { h: "A korábbi ajánlatok betöltése", when: "1–2 hét", p: "Az eddigi ajánlataitok és árlistáitok kereshetővé válnak. Ez önmagában is azonnal használható, még mielőtt bármit automatizálnánk." },
+      { h: "Tervezetkészítés élesben", when: "4–8 hét", p: "Bekötjük az árforrásokat és a beérkezési csatornát, és a rendszer elkezdi előkészíteni a tervezeteket." },
+      { h: "Finomhangolás", when: "folyamatos", p: "A kollégák javításaiból tanul, így a tervezetek egyre kevesebb átírást igényelnek." }
+    ],
+    why: [
+      { h: "Ezt magunkon vezettük be először", p: "A saját ajánlatírásunkat támogató tudásbázis nálunk élesben működik — nem elméletben ismerjük a problémát." },
+      { h: "Elküldeni ember küld", p: "A rendszer előkészít, az ellenőrzés és a döntés a kollégáé marad. Ajánlat nem megy ki emberi jóváhagyás nélkül." },
+      { h: "Az árazási logika a tiétek", p: "Nem egy általános modell találgat: a ti korábbi ajánlataitokból és az érvényes árlistátokból dolgozik." }
+    ],
+    faq: [
+      { q: "Mennyi időt lehet ezzel nyerni?", a: "Ahol az ajánlatírás ma több órás keresgéléssel indul, ott a legtöbb megtakarítás az első lépésben van: az anyagok előkeresésében. A konkrét számot a saját ajánlataitokon mérjük meg." },
+      { q: "Az árakat is a rendszer határozza meg?", a: "Nem. Az árlistát és az árazási elveket ti adjátok, a rendszer ezekből dolgozik. Ahol dönteni kell, ott javaslatot tesz, de a felelősség a kollégáé marad." },
+      { q: "Mi van, ha minden ajánlatunk egyedi?", a: "Teljesen egyedi ajánlatnál is ismétlődik a szerkezet és a hivatkozott korábbi tapasztalat. Épp ezért a tudásbázis-rész gyakran többet hoz, mint a tervezetkészítés." },
+      { q: "Bekötitek a meglévő rendszerünkbe?", a: "Ha van CRM vagy ERP, amelyikben az árak és a megkeresések vannak, akkor igen. Ha nincs, akkor a fájlokból és a levelezésből is tud dolgozni." }
+    ]
+  },
+
+  /* ------------------------------------------------ folyamatautomatizálás --- */
+  "folyamatautomatizalas": {
+    kind: "alkalmazas",
+    nav: "Folyamatautomatizálás",
+    tag: "Alkalmazás",
+    title: "Back-office folyamatok automatizálása",
+    lead: "Nem minden lépéshez kell AI. Egy folyamat java része szabályokkal is leírható — az AI ott kell, ahol értelmezni kell valamit: szabad szöveget, változó formátumot, hiányos adatot.",
+    intro: "A munka nagy része általában az, hogy szétválasszuk a kettőt. Ami szabályozható, azt olcsóbb és megbízhatóbb szabállyal megoldani; ami nem, ott jön képbe az AI.",
+    does: [
+      { h: "Szétválasztjuk a lépéseket", p: "A szabályalapú részek automatikusan futnak, az értelmezést igénylő lépésekre AI kerül. Így nem drágább és nem törékenyebb a megoldás a kelleténél." },
+      { h: "Bekötjük a meglévő rendszerekhez", p: "Ott, ahol van interfész, azon keresztül. Ahol nincs, ott exporttal vagy más kerülőúttal — rendszercsere nélkül." },
+      { h: "Kivételkezelés a folyamat része", p: "Előre eldöntjük, mi történik, ha a rendszer bizonytalan: ki nézi át, milyen határidőn belül, és mi az elfogadható hibaarány." },
+      { h: "Mérünk az elejétől", p: "Rögzítjük a kiindulási értéket, és minden szakaszban ehhez képest mutatjuk meg az eredményt." }
+    ],
+    steps: [
+      { h: "Folyamatfelvétel", when: "az elején", p: "Végigvesszük, mi történik ma, ki mit csinál és hány lépésben. Itt szokott kiderülni, hogy néhány lépést egyszerűbb elhagyni, mint automatizálni." },
+      { h: "Kipróbálás valós adaton", when: "1–2 hét", p: "A folyamat legfájóbb szakaszát próbáljuk ki élesben, mérhető eredménnyel." },
+      { h: "Élesítés és üzemeltetés", when: "4–8 hét", p: "A megoldás a napi működés része lesz, monitorozással és támogatással." }
+    ],
+    why: [
+      { h: "Nem automatizálunk rossz folyamatot", p: "Egy rossz folyamat automatizálva gyorsabb rossz folyamat lesz. Ha valamit egyszerűbb elhagyni vagy átalakítani, azt megmondjuk." },
+      { h: "Fejlesztés és üzemeltetés egy kézben", p: "DevOps- és felhőoldalról indultunk, tehát nemcsak megépítjük, hanem üzemeltetjük is, amit szállítunk." },
+      { h: "Ott is, ahol a felügyelet kötelező", p: "Ahol a jogszabály vagy a belső szabályzat emberi jóváhagyást ír elő, ott a jóváhagyási pont a folyamat része lesz." }
+    ],
+    faq: [
+      { q: "Mi alapján dől el, hogy AI kell-e vagy elég a szabály?", a: "Ha a bemenet mindig ugyanolyan szerkezetű, akkor szabállyal olcsóbb és megbízhatóbb. Ha szabad szöveget, változó formátumot vagy hiányos adatot kell értelmezni, akkor kell AI. A legtöbb folyamatban mindkettő van." },
+      { q: "Le kell cserélni a mostani rendszereinket?", a: "Nem. Az automatizálás a meglévő rendszerek köré épül, nem helyettük." },
+      { q: "Mi lesz azokkal, akik ma ezt a munkát végzik?", a: "Ezt érdemes a projekt elején tisztázni a csapattal, mert ha félelem övezi a bevezetést, az meg is buktatja. A tapasztalat az, hogy a felszabaduló idő oda kerül, ahol eddig nem jutott rá kapacitás." },
+      { q: "Mennyi belső erőforrás kell hozzá?", a: "Egy döntéshozó, és egy kolléga, aki ismeri a folyamatot és heti pár órában elérhető. Ennél többre általában nincs szükség." }
+    ]
+  }
+};
+
+/* Fejléc-menü. Egy elem vagy önálló oldal ({key}), vagy lenyíló csoport
+   ({label, children}). Új termék: vedd fel a PAGES-be, és írd bele a children-be. */
+const NAV = [
+  { key: "kkv" },
+  { key: "vallalati" },
+  { key: "ai-act" },
+  { label: "Termékek", children: ["szamlafeldolgozas", "dokumentumfeldolgozas",
+                                  "ajanlatkeszites", "folyamatautomatizalas"] }
+];
+
+/* ===========================================================================
+   MEGOLDÁSTÁR
+   Új eset: egy új objektum. A szűrők és a számláló maguktól frissülnek.
+   ========================================================================= */
+const USE_CASES = [
+  { area:"Számla és pénzügy", title:"Bejövő számlák feldolgozása",
+    text:"A számla e-mailben, portálról vagy papíron érkezik. A rendszer kiolvassa az adatokat a tételsorokkal együtt, összeveti a megrendeléssel, és könyvelési javaslatot ad a korábbi gyakorlatotok alapján.",
+    gain:"A feldolgozási idő tapasztalatunk szerint a <b>harmadára</b> csökken." },
+  { area:"Számla és pénzügy", title:"Hónapzárás gyorsítása",
+    text:"A hiányzó és a jóváhagyásra váró tételek folyamatosan látszanak, nem a zárás hetében derülnek ki. Aki elakadt egy jóváhagyással, emlékeztetőt kap.",
+    gain:"Kevesebb csúszás, és nem vész el a korai fizetési kedvezmény." },
+  { area:"Számla és pénzügy", title:"Szállítólevelek és megrendelések egyeztetése",
+    text:"A szállítólevél, a megrendelés és a számla összevetése automatikusan megtörténik. Ami nem stimmel, az kerül csak ember elé.",
+    gain:"Az eltérések a fizetés előtt derülnek ki, nem utána." },
+
+  { area:"Dokumentumok", title:"Szerződések határidőfigyelése",
+    text:"A rendszer kiolvassa a futamidőt, a felmondási határidőt és az automatikus meghosszabbodást minden szerződésből, és időben szól.",
+    gain:"Egyetlen elfelejtett felmondás gyakran <b>többe kerül, mint a teljes projekt</b>." },
+  { area:"Dokumentumok", title:"Szerződéstervezet előkészítése",
+    text:"A saját sablonotokból és a megadott adatokból elkészül a tervezet, amit a jogász már csak átnéz — nem nulláról ír.",
+    gain:"A rutinszerződések átfutása napokról órákra rövidül." },
+  { area:"Dokumentumok", title:"Beérkező szerződés átvizsgálása",
+    text:"A partner által küldött tervezetben megmutatja, mi tér el a szokásos feltételeitektől, és mi kockázatos rátok nézve. Ellenőrzőlista szerint végigmegy rajta.",
+    gain:"Nem múlik figyelmen, ha egy kikötés kimarad." },
+  { area:"Dokumentumok", title:"Teljesítésigazolások követése",
+    text:"Összeveti, mit vállaltatok és mit szállítottatok le, követi az aláírásra váró igazolásokat, és jelzi, amint valami számlázható.",
+    gain:"Megválaszolható lesz, hogy <b>mi van leszállítva, de nem kiszámlázva</b>." },
+  { area:"Dokumentumok", title:"Tenderek és árajánlatok feldolgozása",
+    text:"Az alvállalkozói árak kigyűjtése Word-, PDF- és Excel-fájlokból, a képletek ellenőrzése és az ütemterv összeállítása — ami eddig teljesen kézzel ment.",
+    gain:"Építőipari ügyfelünknél <b>évi ~250 tender</b>, egyenként 6–8 óra kézi munkáról indulva." },
+  { area:"Dokumentumok", title:"Műszaki dokumentáció és rajzok",
+    text:"Szkennelt anyagból, műszaki rajzból és fotóból is kiolvassa az adatokat, strukturálja és ellenőrzi őket.",
+    gain:"A rajzokban lévő adat kereshetővé és összevethetővé válik." },
+
+  { area:"HR és toborzás", title:"Önéletrajzok feldolgozása",
+    text:"Egységes, továbbküldhető formátumra hozza a jelentkezéseket, és indoklással illeszti őket a pozícióhoz. A döntés emberé marad — ezt a jogszabály is így kívánja.",
+    gain:"Ezt a saját toborzásunkban használjuk." },
+  { area:"HR és toborzás", title:"Anonimizált jelöltanyag",
+    text:"Név, kor és fotó nélküli változat készül az önéletrajzokból, a szakmai tartalom megtartásával.",
+    gain:"Egyszerre adatvédelmi szempontból tisztább és elfogulatlanabb szűrés." },
+  { area:"HR és toborzás", title:"Belső tudás- és készségkeresés",
+    text:"„Ki tud nálunk Kubernetest?” — a meglévő kollégák önéletrajzaiban és profiljaiban is lehet keresni.",
+    gain:"A projektre keresett ember gyakran már bent van a cégnél." },
+
+  { area:"Tudásbázis", title:"Belső tudásbázis kereséssel",
+    text:"A szabályzatok, a műszaki dokumentáció és a korábbi projektek egy helyen, kereshetően. A válasz mellett mindig ott van, melyik dokumentum melyik pontjából származik.",
+    gain:"Nálunk élesben fut, és zárt platformként ügyfélnél is." },
+  { area:"Tudásbázis", title:"Ajánlatíráshoz korábbi anyagok",
+    text:"A korábbi ajánlatok, referenciák és árazási elvek előkeresése ajánlatíráskor — nem emlékezetből, hanem a tényleges anyagokból.",
+    gain:"Ezt magunkon vezettük be először." },
+  { area:"Tudásbázis", title:"ISO- és auditfelkészülés",
+    text:"Megmutatja, melyik szabályzat mit ír elő, és hol nincs lefedve valami. Amire nem tud válaszolni, az a dokumentációtokból hiányzik.",
+    gain:"A felkészülés melléktermékeként kiderül, mi hiányzik." },
+  { area:"Tudásbázis", title:"Új belépő betanulása",
+    text:"Az első hetek kérdéseire a rendszer válaszol, forrásmegjelöléssel — nem a szomszéd kollégát kell megállítani.",
+    gain:"Két ember ideje szabadul fel: az újé és a szakértőé." },
+
+  { area:"Ügyfélkommunikáció", title:"Támogatás ügyfélszolgálati hívás közben",
+    text:"A kolléga vonalban van, az ügyfél vár — a válasz pedig három rendszerben és két mappában van szétszórva. A rendszer másodpercek alatt megtalálja.",
+    gain:"Rövidebb hívások, és több ügy oldódik meg elsőre." },
+  { area:"Ügyfélkommunikáció", title:"Többnyelvű chat a saját tartalmaitokból",
+    text:"Chatfelület, amely a ti dokumentumaitokból válaszol, hang- és képfeldolgozással kiegészítve.",
+    gain:"Éles platformunknál a beállítás <b>10–15 percről 30 másodpercre</b> csökkent." },
+  { area:"Ügyfélkommunikáció", title:"Beérkező e-mailek előkészítése",
+    text:"Az ismétlődő megkeresésekre válaszjavaslat készül, a többit rendszerezve kapja meg a kolléga. Elküldeni ember küld.",
+    gain:"A gyakori kérdések nem viszik el a nap első óráját." },
+
+  { area:"Megfelelés és üzemeltetés", title:"Zárt, auditálható AI-környezet",
+    text:"Saját felhőkörnyezet, ahol minden lépés visszakereshető, és az egyes szervezetek adata teljesen elkülönül egymástól.",
+    gain:"Szabályozott pénzügyi ügyfélnél <b>2025 áprilisa óta</b> élesben." },
+  { area:"Megfelelés és üzemeltetés", title:"EU AI Act kockázati besorolás",
+    text:"Végigvesszük, melyik folyamatotok esik melyik kockázati kategóriába, és mit jelent ez a dokumentálásra és az emberi felülvizsgálatra.",
+    gain:"A projekt elején tisztázva, nem az élesítés előtt." },
+  { area:"Megfelelés és üzemeltetés", title:"Jogosultságok öröklése",
+    text:"Aki nem láthatja a fájlt, annak a rendszer sem mond belőle semmit. A meglévő jogosultságaitok érvényben maradnak.",
+    gain:"Ezen bukik el a legtöbb házilag összerakott megoldás." },
+];
+
+/* ========================================================== megjelenítés === */
+const app = document.getElementById("app");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+
+const CTA = `
+<section class="cta">
+  <div class="wrap">
+    <span class="prompt">következő lépés</span>
+    <h2>Kezdjük egy felméréssel</h2>
+    <p>
+      Átnézzük a jelenlegi folyamataitokat, és konkrét listát adunk arról, hol érhető el
+      a legnagyobb megtakarítás. Ha érdekel a felmérés, vedd fel a kapcsolatot Sárával.
+    </p>
+    <div class="person">
+      <span class="who">Halász Sára</span>
+      <span class="role">Sales Manager</span>
+      <a href="mailto:sales@devertix.com">sales@devertix.com</a>
+      <a href="tel:+36307600903">+36 30 760 0903</a>
+    </div>
+  </div>
+</section>`;
+
+function tileList(kind) {
+  return Object.keys(PAGES).filter(k => PAGES[k].kind === kind).map(k => {
+    const p = PAGES[k];
+    return `<a class="tile" href="#/${k}">
+      <span class="tag ${p.tagClass || ""}">${esc(p.tag)}</span>
+      <h3>${esc(p.title)}</h3>
+      <p>${esc(p.lead.split(". ")[0])}.</p>
+      <span class="more">Részletek</span>
+    </a>`;
+  }).join("");
+}
+
+function homeView() {
+  return `
+<header class="hero">
+  <div class="wrap">
+    <span class="prompt">ai megoldások</span>
+    <h1>Mire tudjátok használni az AI-t?</h1>
+    <p>
+      Ez az oldal azt mutatja meg, hogy egy hozzátok hasonló cégnél hol van valódi haszna
+      az AI-nak — nem elvben, hanem konkrét folyamatokon. Válasszatok belépőt, vagy nézzétek
+      végig, mi mindent lehet vele csinálni.
+    </p>
+    <div class="hero-meta">
+      <span>AWS Advanced Tier partner</span>
+      <span>ISO 9001 · ISO/IEC 27001</span>
+      <span>Éles AI-rendszerek 2022 óta</span>
+      <span>~40 fős mérnökcsapat</span>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="prompt">hol tartotok</span>
+      <h2>Három belépő, cégmérettől és céltól függően</h2>
+      <p>Ugyanaz a mérnökcsapat viszi mindhármat — a különbség az előkészítés mélységében van.</p>
+    </div>
+    <div class="cards">${tileList("megoldas")}</div>
+  </div>
+</section>
+
+<section class="tint">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="prompt">termékek</span>
+      <h2>Amivel a legtöbb cég kezdi</h2>
+      <p>Négy terület, ahol a leggyorsabban megtérül a bevezetés. Mindegyikről van külön oldal.</p>
+    </div>
+    <div class="cards four">${tileList("alkalmazas")}</div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="prompt">megoldástár</span>
+      <h2>Konkrét felhasználási esetek</h2>
+      <p>Szűrjetek területre, vagy keressetek rá arra a folyamatra, ami nálatok a legtöbb időt viszi.</p>
+    </div>
+    <div class="controls">
+      <div class="chips" id="chips" role="group" aria-label="Szűrés terület szerint"></div>
+      <input class="search" id="search" type="search" aria-label="Keresés a felhasználási esetek között"
+             placeholder="Keresés… pl. számla, szerződés, ügyfélszolgálat">
+    </div>
+    <p class="count" id="count"></p>
+    <div class="grid" id="grid"></div>
+  </div>
+</section>
+
+<section class="tint">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="prompt">hogyan dolgozunk</span>
+      <h2>Egy fix áras csomaggal kezdünk, nem féléves projekttel</h2>
+      <p>Minden szakasz végén ti döntötök a folytatásról. Nincs olyan pont, ahonnan ne lehetne kiszállni.</p>
+    </div>
+    <div class="steps">
+      <article class="step"><h3>AI Starter csomag</h3><p>Felmérés, a use case kiválasztása, a KPI rögzítése és egy folyamat automatizálása — a végén ajánlattal a folytatásra.</p><span class="when">fix áron</span></article>
+      <article class="step"><h3>A következő folyamatok</h3><p>A felmérésen megjelölt esetek közül azzal folytatjuk, amelyik a legtöbbet hozza.</p><span class="when">a roadmap szerint</span></article>
+      <article class="step"><h3>Üzemeltetés és bővítés</h3><p>Ami élesben fut, azt üzemeltetjük is. A rendszer és az adat végig a tiétek.</p><span class="when">folyamatos</span></article>
+    </div>
+  </div>
+</section>
+${CTA}`;
+}
+
+function block(title, eyebrow, inner, tint) {
+  if (!inner) return "";
+  return `<section class="${tint ? "tint" : ""}"><div class="wrap">
+    <div class="sec-head"><span class="prompt">${esc(eyebrow)}</span><h2>${esc(title)}</h2></div>
+    ${inner}</div></section>`;
+}
+
+function packBlock(pk) {
+  if (!pk) return "";
+  return `<section><div class="wrap"><div class="pack">
+    <div class="pack-head">
+      <h3>${esc(pk.name)}</h3>
+      <span class="pack-price">${esc(pk.price)} <small>${esc(pk.vat)}</small></span>
+    </div>
+    <p>${esc(pk.note)}</p>
+    <ol>${pk.items.map(i => `<li><div><b>${esc(i.h)}</b><span>${esc(i.p)}</span></div></li>`).join("")}</ol>
+  </div></div></section>`;
+}
+
+function pageView(key) {
+  const p = PAGES[key];
+  const does = p.does ? `<div class="cards">${p.does.map(d =>
+    `<article class="tile"><h3>${esc(d.h)}</h3><p>${esc(d.p)}</p></article>`).join("")}</div>` : "";
+  const steps = p.steps ? `<div class="steps">${p.steps.map(s =>
+    `<article class="step"><h3>${esc(s.h)}</h3><p>${esc(s.p)}</p>${s.when ? `<span class="when">${esc(s.when)}</span>` : ""}</article>`).join("")}</div>` : "";
+  const why = p.why ? `<div class="cards">${p.why.map(w =>
+    `<article class="tile"><h3>${esc(w.h)}</h3><p>${esc(w.p)}</p></article>`).join("")}</div>` : "";
+  const faq = p.faq ? `<div class="faq">${p.faq.map(f =>
+    `<details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join("")}</div>` : "";
+
+  return `
+<header class="hero">
+  <div class="wrap">
+    <a class="back" href="#/">vissza az áttekintéshez</a>
+    <span class="prompt">${esc(p.tag.toLowerCase())}</span>
+    <h1>${esc(p.title)}</h1>
+    <p>${esc(p.lead)}</p>
+  </div>
+</header>
+
+${p.intro || p.stat ? `<section><div class="wrap">
+  ${p.intro ? `<p style="max-width:66ch;color:var(--ink-muted);font-size:1.02rem">${esc(p.intro)}</p>` : ""}
+  ${p.stat ? `<div class="stat"><b>${esc(p.stat.value)}</b><span>${esc(p.stat.label)}</span></div>` : ""}
+</div></section>` : ""}
+
+${block(p.doesTitle || "Mit csinál a rendszer", "mit kaptok", does, true)}
+${packBlock(p.pack)}
+${block("Hogyan vezetjük be", "lépésről lépésre", steps, !p.pack)}
+${block("Miért velünk", "miért mi", why, !!p.pack)}
+${block("Gyakori kérdések", "gyik", faq, false)}
+${CTA}`;
+}
+
+function buildNav(current) {
+  const bar = document.getElementById("topnav");
+  bar.innerHTML = NAV.map(item => {
+    if (item.key) {
+      return `<a href="#/${item.key}" class="${item.key === current ? "on" : ""}">${esc(PAGES[item.key].nav)}</a>`;
+    }
+    const inside = item.children.includes(current);
+    return `<span class="dd">
+      <button type="button" class="${inside ? "on" : ""}" aria-expanded="false">${esc(item.label)}</button>
+      <span class="dd-panel">${item.children.map(k =>
+        `<a href="#/${k}" class="${k === current ? "on" : ""}">${esc(PAGES[k].nav)}</a>`).join("")}</span>
+    </span>`;
+  }).join("");
+
+  bar.querySelectorAll(".dd").forEach(dd => {
+    const btn = dd.querySelector("button"), panel = dd.querySelector(".dd-panel");
+    btn.addEventListener("click", e => {
+      e.stopPropagation();
+      const open = panel.classList.toggle("open");
+      btn.setAttribute("aria-expanded", String(open));
+    });
+    panel.addEventListener("click", e => e.stopPropagation());
+  });
+}
+
+/* a lenyíló menü bezárása kattintásra és Escape-re */
+function closeMenus() {
+  document.querySelectorAll(".dd-panel.open").forEach(p => {
+    p.classList.remove("open");
+    p.parentElement.querySelector("button").setAttribute("aria-expanded", "false");
+  });
+}
+document.addEventListener("click", closeMenus);
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeMenus(); });
+
+/* -------------------------------------------------------------- katalógus --- */
+let activeArea = "mind";
+function initCatalog() {
+  const chipBox = document.getElementById("chips");
+  const search = document.getElementById("search");
+  const grid = document.getElementById("grid");
+  const countEl = document.getElementById("count");
+  if (!chipBox) return;
+  const areas = ["mind", ...new Set(USE_CASES.map(u => u.area))];
+  activeArea = "mind";
+
+  function render() {
+    const q = search.value.trim().toLowerCase();
+    const list = USE_CASES.filter(u => {
+      const okArea = activeArea === "mind" || u.area === activeArea;
+      const hay = (u.title + " " + u.text + " " + u.gain + " " + u.area).toLowerCase();
+      return okArea && (!q || hay.includes(q));
+    });
+    countEl.textContent = list.length ? `${list.length} felhasználási eset` : "";
+    grid.innerHTML = list.length ? list.map(u => `
+      <article class="uc">
+        <span class="area">${esc(u.area)}</span>
+        <h3>${esc(u.title)}</h3>
+        <p>${esc(u.text)}</p>
+        <p class="gain">${u.gain}</p>
+      </article>`).join("")
+      : `<p class="empty">Erre nincs találat. Próbáljatok más kifejezést, vagy kérdezzetek rá közvetlenül — a lista folyamatosan bővül.</p>`;
+  }
+
+  chipBox.innerHTML = areas.map(a =>
+    `<button class="chip" type="button" data-area="${esc(a)}" aria-pressed="${a === activeArea}">${esc(a)}</button>`).join("");
+  chipBox.querySelectorAll(".chip").forEach(btn => btn.addEventListener("click", () => {
+    activeArea = btn.dataset.area;
+    chipBox.querySelectorAll(".chip").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.area === activeArea)));
+    render();
+  }));
+  search.addEventListener("input", render);
+  render();
+}
+
+/* ------------------------------------------------------------- útvonalak --- */
+function route() {
+  const key = (location.hash.replace(/^#\/?/, "") || "").trim();
+  if (key && PAGES[key]) {
+    app.innerHTML = pageView(key);
+    buildNav(key);
+  } else {
+    app.innerHTML = homeView();
+    buildNav(null);
+    initCatalog();
+  }
+  window.scrollTo({ top: 0, behavior: "instant" });
+}
+window.addEventListener("hashchange", route);
+route();
+</script>
