@@ -253,9 +253,12 @@ a.tile:focus-visible { outline:2px solid var(--cyan); outline-offset:3px; }
   padding:28px 26px 26px;
 }
 .tier.featured {
+  background:var(--brand-soft);
   border-color:var(--brand); border-top:4px solid var(--brand);
   box-shadow:var(--shadow); padding-top:34px;
 }
+/* a kiemelt kártyán a szaggatott elválasztó a világosabb alapon is látsszon */
+.tier.featured .note { border-top-color:color-mix(in srgb, var(--brand) 30%, transparent); }
 .tier-badge {
   position:absolute; top:-11px; left:26px;
   font-family:"JetBrains Mono",ui-monospace,monospace;
@@ -430,7 +433,7 @@ const PAGES = {
         items: [
           "Felmérés és a use case kiválasztása: a legnagyobb hatású manuális munkafolyamatokat automatizáljuk először",
           "KPI meghatározása még az ajánlat elfogadása előtt",
-          "Egy automatizáció megvalósítása, komplex integrációk nélkül",
+          "Egy automatizáció megvalósítása — egyszerű integrációval is, ha a meglévő rendszer adja hozzá a felületet",
           "Ajánlat és ütemterv a további felhasználási esetekre"
         ],
         note: "A mércét az ajánlat elfogadása előtt rögzítjük. Ha a várható nyereség nem elég, azt megmondjuk — akkor ne csináljuk meg feleslegesen."
@@ -451,7 +454,7 @@ const PAGES = {
       }
     ],
     steps: [
-      { h: "AI Starter csomag", when: "fix áron", p: "Felmérés, a use case kiválasztása, a KPI rögzítése és egy folyamat automatizálása. A végén ajánlatot adunk a további felhasználási esetekre." },
+      { h: "AI Starter csomag", when: "fix áron", p: "Felmérés, a use case kiválasztása, a KPI rögzítése és egy folyamat automatizálása — egyszerű integrációval együtt. A végén ajánlatot adunk a további felhasználási esetekre." },
       { h: "A következő folyamatok", when: "a roadmap szerint", p: "A felmérésen megjelölt esetek közül azzal folytatjuk, amelyik a legtöbbet hozza. Minden szakasz után dönthettek arról, hogy megyünk-e tovább." },
       { h: "Üzemeltetés és bővítés", when: "folyamatos", p: "Ami élesben fut, azt üzemeltetjük és karbantartjuk, ha kéritek. Az AI-képesség pedig területről területre terjed a cégben." }
     ],
@@ -468,7 +471,8 @@ const PAGES = {
       { q: "Mi lesz az adatainkkal?", a: "A megoldás a ti saját felhőkörnyezetetekben épül fel. Az adat nem hagyja el, és nem használjuk fel modell tanítására. Ahol a szabályozás megkívánja, minden lépés visszakereshető marad." },
       { q: "Mi van, ha nem válik be?", a: "A KPI-t még az ajánlat elfogadása előtt rögzítjük. Ha már ott látszik, hogy a várható nyereség nem elég, azt megmondjuk, és nem csináljuk meg feleslegesen. A csomag után pedig ti döntötök a folytatásról — ami elkészült, az akkor is a tiétek marad." },
       { q: "Mennyibe kerül?", a: "Az AI Starter csomag 1.900.000 Ft + ÁFA, fix áron: felmérés, KPI-meghatározás, egy folyamat automatizálása és ajánlat a folytatásra. Ha egy konkrét, már kiválasztott feladatról van szó, azt óradíjas elszámolással is meg tudjuk csinálni — ez kisebb terjedelemnél olcsóbb is lehet. Nagyobb, több folyamatot érintő bevezetésre egyedi ajánlatot adunk a felmérés után." },
-      { q: "Miért érdemes a fix áras csomagot választani az óradíjas helyett?", a: "Az óradíjas munka akkor a jobb választás, ha pontosan tudjátok, mit akartok, és az a feladat egyszerű. A csomagban viszont benne van a felmérés és a KPI rögzítése — vagyis az, hogy egyáltalán a jó folyamattal kezdtek-e. A tapasztalat az, hogy a legdrágább hiba nem a rossz megvalósítás, hanem a rossz folyamat kiválasztása." }
+      { q: "Miért érdemes a fix áras csomagot választani az óradíjas helyett?", a: "Az óradíjas munka akkor a jobb választás, ha pontosan tudjátok, mit akartok, és az a feladat egyszerű. A csomagban viszont benne van a felmérés és a KPI rögzítése — vagyis az, hogy egyáltalán a jó folyamattal kezdtek-e. A tapasztalat az, hogy a legdrágább hiba nem a rossz megvalósítás, hanem a rossz folyamat kiválasztása." },
+      { q: "Benne van az integráció a Starter csomagban?", a: "Az egyszerű igen. Ha a meglévő rendszeretek adja a felületet az adatcseréhez, és nem kell hozzá külön fejlesztés a másik oldalon, akkor a bekötés a csomag része. Ami nem fér bele: ha a rendszert előbb fel kell készíteni, ha egyedi felületet kell hozzá építeni, vagy ha több rendszert kell összehangolni — ezek külön ajánlattal mennek. Hogy melyik eset áll fenn, azt a felmérés első napjaiban látjuk, és még az ajánlat előtt megmondjuk." }
     ]
   },
 
@@ -508,23 +512,26 @@ const PAGES = {
   /* -------------------------------------------------------- vállalati --- */
   "vallalati": {
     kind: "megoldas", tagClass: "cyan",
-    nav: "Vállalati",
-    tag: "AI bevezetés — vállalati",
-    title: "AI nagyvállalati és szabályozott környezetben",
-    lead: "Nagyobb szervezetnél az AI ritkán egyetlen folyamatról szól. Ott a kérdés az, hogyan illeszkedik a meglévő rendszerekhez, mit kell naplózni, és hogyan lehet több területen ugyanarra az alapra építeni.",
-    intro: "Ugyanaz a mérnökcsapat viszi, mint a kisebb projekteket — a különbség az előkészítés mélységében és abban van, hogy itt AWS-forrás is bevonható a projektbe.",
+    nav: "Integráció",
+    tag: "Integráció",
+    title: "Illeszkedés a meglévő rendszerekhez",
+    lead: "Az AI akkor ér valamit, ha oda kerül, ahol a munka folyik: a könyvelőrendszerbe, az ügyviteli rendszerbe, a levelezésbe. Nem mellé épül, hanem bele — így nem lesz belőle még egy felület, amit külön kell nyitogatni.",
+    intro: "Ez a rész arról szól, hogyan kapcsolódik a megoldás a nálatok már működő rendszerekhez, és mi történik akkor, ha az adat érzékeny. Nem cégmérethez kötött: egy 20 fős cégnél is lehet szigorúbb elvárás, mint egy nagyvállalatnál.",
     does: [
+      { h: "Bekötés a meglévő rendszerekhez", p: "Ahol van hozzá felület, azon keresztül. Ahol nincs, ott exporttal vagy más kerülőúttal — rendszercsere nélkül. Az AI a meglévő architektúrába épül, nem mellé." },
       { h: "Zárt, auditálható környezet", p: "Saját felhőkörnyezet, ahol minden lépés visszakereshető, és az egyes szervezeti egységek vagy ügyfelek adata teljesen elkülönül egymástól." },
-      { h: "Illeszkedés a meglévő rendszerekhez", p: "Az AI a meglévő architektúrába épül, nem mellé. Nincs párhuzamos rendszer, amit külön kell karbantartani." },
-      { h: "Több terület, egy alap", p: "Ami az első folyamatnál elkészül — a betöltés, a jogosultságkezelés, a naplózás — azt a következő területek is használják." },
-      { h: "AWS-finanszírozás", p: "AWS Migration Acceleration Program partnerként a finanszírozás igénylését, a mérföldkő-követést és a riportálást mi visszük. Ezt az ügyfél önállóan nem tudja lehívni." }
+      { h: "A jogosultságok érvényben maradnak", p: "Aki egy dokumentumhoz nem fér hozzá, annak a rendszer sem válaszol belőle. A meglévő hozzáférési szabályaitok öröklődnek, nem kell újra felépíteni őket." },
+      { h: "Több terület, egy alap", p: "Ami az első folyamatnál elkészül — a betöltés, a jogosultságkezelés, a naplózás — azt a következő területek is használják. Így a második bevezetés már olcsóbb." },
+      { h: "AWS-finanszírozás", p: "AWS Migration Acceleration Program partnerként a finanszírozás igénylését, a mérföldkő-követést és a riportálást mi visszük. Ezt önállóan nem lehet lehívni, csak partneren keresztül." }
     ],
+    doesTitle: "Mit jelent ez a gyakorlatban",
     steps: [
       { h: "Felmérés és üzleti eset", when: "", p: "Folyamatfelmérés, adatforrások, integrációs pontok és megtérülési számítás. Ha AWS-projektként fut, a finanszírozás igénylése is itt indul." },
       { h: "Alapok és pilot", when: "", p: "Landing Zone, biztonsági alapok, jogosultsági modell — és egy pilot, ami valós adaton mutatja meg az eredményt." },
       { h: "Bevezetés és üzemeltetés", when: "", p: "Hullámokban ütemezett élesítés, mérhető célszámokkal, majd folyamatos üzemeltetés és támogatás." }
     ],
     why: [
+      { h: "Nem cégmérethez kötjük", p: "Ha nálatok érzékeny az adat vagy szigorú a belső szabályzat, ugyanazt az alapot kapjátok, mint egy nagyobb szervezet. A méret nem dönti el, kinek mi jár." },
       { h: "Bank-léptékű tapasztalat", p: "Három nagybank informatikai rendszereit egyesítettük egyetlen AWS-alapú platformon, a pénzügyi szektor szabályozási elvárásai mellett." },
       { h: "AWS Advanced Tier partner", p: "Hat auditált AWS-partnerprogram — ezek mögött tanúsított mérnökök és az AWS által ellenőrzött, éles ügyfélprojektek állnak." },
       { h: "Mélység az üzemeltetésben is", p: "Nemcsak AWS-, hanem Kubernetes-tanúsítványokkal is dolgozunk. Van kollégánk, aki mind az öt Kubernetes-vizsgát megszerezte." },
@@ -816,8 +823,8 @@ function homeView() {
   <div class="wrap">
     <div class="sec-head">
       <span class="prompt">hol tartotok</span>
-      <h2>Három belépő, cégmérettől és céltól függően</h2>
-      <p>Ugyanaz a mérnökcsapat viszi mindhármat — a különbség az előkészítés mélységében van.</p>
+      <h2>Három kérdés, ami mindig felmerül</h2>
+      <p>Hol kezdjük, mit kíván a jogszabály, és hogyan illeszkedik a nálatok már működő rendszerekhez.</p>
     </div>
     <div class="cards">${tileList("megoldas")}</div>
   </div>
