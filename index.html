@@ -257,8 +257,10 @@ a.tile:focus-visible { outline:2px solid var(--cyan); outline-offset:3px; }
   border-color:var(--brand); border-top:4px solid var(--brand);
   box-shadow:var(--shadow); padding-top:34px;
 }
-/* a kiemelt kártyán a szaggatott elválasztó a világosabb alapon is látsszon */
+/* a kiemelt kártyán a szaggatott elválasztó a színes alapon is látsszon */
 .tier.featured .note { border-top-color:color-mix(in srgb, var(--brand) 30%, transparent); }
+/* a halvány felirat a színes háttéren 3,8:1-re esne — erősebb színt kap */
+.tier.featured .tier-who { color:var(--ink-muted); }
 .tier-badge {
   position:absolute; top:-11px; left:26px;
   font-family:"JetBrains Mono",ui-monospace,monospace;
